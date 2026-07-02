@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { SERVICES_LIST } from '../data';
-import { Calendar, Clock, User, Phone, Mail, MessageSquare, Search, CalendarPlus, Bell } from 'lucide-react';
+import { Calendar, Clock, User, Phone, Mail, MessageSquare, Search, CalendarPlus, Bell, Gift } from 'lucide-react';
 
 export function Booking() {
   const [formData, setFormData] = useState({
@@ -11,7 +11,8 @@ export function Booking() {
     email: '',
     date: '',
     time: '',
-    comments: ''
+    comments: '',
+    referralCode: ''
   });
   
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -86,7 +87,7 @@ export function Booking() {
       return;
     }
 
-    const message = `Hola, deseo reservar una cita.
+    let message = `Hola, deseo reservar una cita.
 
 Nombre: ${formData.name}
 Apellido: ${formData.lastName}
@@ -99,9 +100,13 @@ Servicios seleccionados:
 ${selectedServices.map(s => `* ${s}`).join('\n')}
 
 Comentarios:
-${formData.comments || 'Ninguno'}
+${formData.comments || 'Ninguno'}`;
 
-Muchas gracias.`;
+    if (formData.referralCode) {
+      message += `\n\nCódigo de Referido: ${formData.referralCode}`;
+    }
+
+    message += `\n\nMuchas gracias.`;
 
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/584143518301?text=${encodedMessage}`, '_blank');
@@ -342,6 +347,17 @@ Por favor envíenme un recordatorio por WhatsApp 24 horas antes de mi cita. ¡Gr
                     </label>
                   ))}
                 </div>
+              </div>
+
+              <div className="relative">
+                <Gift className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                <input 
+                  type="text" 
+                  placeholder="Código de referido o enlace (opcional)" 
+                  className="w-full bg-stone-50 dark:bg-stone-800 border border-gray-200 dark:border-stone-700 dark:text-white rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                  value={formData.referralCode} 
+                  onChange={e => setFormData({...formData, referralCode: e.target.value})}
+                />
               </div>
 
               <div className="relative">

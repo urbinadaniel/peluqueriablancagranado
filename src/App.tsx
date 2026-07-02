@@ -12,6 +12,7 @@ import { Loyalty } from './components/Loyalty';
 import { Team } from './components/Team';
 import { FAQ } from './components/FAQ';
 import { GiftCardModal } from './components/GiftCardModal';
+import { LoyaltyChatbot } from './components/LoyaltyChatbot';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -72,6 +73,7 @@ export default function App() {
       )}
       <Footer />
       <FloatingButtons />
+      <LoyaltyChatbot />
       <GiftCardModal isOpen={isGiftCardOpen} onClose={() => setIsGiftCardOpen(false)} />
     </div>
   );
