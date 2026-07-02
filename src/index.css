@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #9D7C85;
+  --color-secondary: #D69EAF;
+  --color-accent: #B15D70;
+  --color-dark: #4F2F2D;
+  --color-natural: #61604C;
+  --color-background: #FAF9F6;
+  --color-stone-50: #FAF9F6;
+  --color-stone-100: #F3EEED;
+  --color-stone-200: #EAE6E1;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Georgia', 'Playfair Display', ui-serif, serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-background);
+  }
+  html.dark body {
+    background-color: #09090b;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-soft {
+    background: linear-gradient(135deg, var(--color-stone-50) 0%, var(--color-stone-100) 100%);
+  }
+  .dark .bg-gradient-soft {
+    background: linear-gradient(135deg, #18181b 0%, #09090b 100%);
+  }
+  .border-soft {
+    border-color: rgba(157, 124, 133, 0.2);
+  }
+  .dark .border-soft {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.masonry-grid {
+  column-count: 1;
+  column-gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .masonry-grid {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .masonry-grid {
+    column-count: 3;
+  }
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
