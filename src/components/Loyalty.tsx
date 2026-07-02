@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Star, Gift, Crown, Scissors, Share2, Copy, Check } from 'lucide-react';
+import { Star, Gift, Crown, Scissors, Share2, Copy, Check, History, Calendar, CheckCircle2 } from 'lucide-react';
 
 export function Loyalty() {
   const [referralName, setReferralName] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
   const [copied, setCopied] = useState(false);
+  const [simulatedPoints, setSimulatedPoints] = useState(6);
 
   const handleGenerateLink = (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,13 +95,88 @@ export function Loyalty() {
           </div>
         </div>
 
+        {/* Progress Tracker Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 p-8 md:p-12 rounded-2xl max-w-4xl mx-auto mb-16"
+        >
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-display mb-4">Tu Progreso de Recompensas</h3>
+            <p className="text-white/70 font-light">Simula cuántos puntos tienes para ver qué tan cerca estás de tu próximo premio.</p>
+          </div>
+          
+          <div className="flex flex-col md:flex-row items-center gap-12 mb-8 px-4 md:px-0">
+            <div className="w-full md:w-1/3">
+              <label className="block text-sm font-medium text-white/80 mb-4 text-center md:text-left">Puntos Actuales (Simulación)</label>
+              <input 
+                type="range" 
+                min="0" 
+                max="25" 
+                value={simulatedPoints} 
+                onChange={(e) => setSimulatedPoints(parseInt(e.target.value))}
+                className="w-full h-2 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-secondary"
+              />
+              <div className="text-center mt-6">
+                <span className="text-5xl font-display text-secondary">{simulatedPoints}</span>
+                <span className="text-white/60 ml-2 font-medium uppercase tracking-wider text-xs">puntos</span>
+              </div>
+            </div>
+            
+            <div className="w-full md:w-2/3 relative pt-10 pb-16 md:pb-0">
+               {/* Progress Bar Container */}
+               <div className="relative h-3 bg-zinc-800 rounded-full overflow-hidden">
+                 <motion.div 
+                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+                   initial={{ width: 0 }}
+                   animate={{ width: `${Math.min(100, (simulatedPoints / 20) * 100)}%` }}
+                   transition={{ type: "spring", damping: 20 }}
+                 />
+               </div>
+               
+               {/* Markers */}
+               <div className="absolute top-2 left-0 -translate-x-1/2 flex flex-col items-center">
+                 <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center bg-zinc-900 z-10 transition-colors ${simulatedPoints >= 0 ? 'border-secondary text-secondary' : 'border-zinc-700 text-zinc-500'}`}>
+                   <Star className="w-4 h-4" />
+                 </div>
+                 <div className="mt-4 text-center absolute top-full w-24">
+                   <div className="text-xs font-bold">0 Pts</div>
+                   <div className="text-[10px] text-white/60 mt-1">Inicio</div>
+                 </div>
+               </div>
+
+               <div className="absolute top-2 left-[50%] -translate-x-1/2 flex flex-col items-center">
+                 <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center bg-zinc-900 z-10 transition-colors ${simulatedPoints >= 10 ? 'border-secondary text-secondary' : 'border-zinc-700 text-zinc-500'}`}>
+                   <Gift className="w-4 h-4" />
+                 </div>
+                 <div className="mt-4 text-center absolute top-full w-32">
+                   <div className="text-xs font-bold text-secondary">10 Pts</div>
+                   <div className="text-[10px] text-white/60 mt-1 leading-tight">Secado Gratis</div>
+                 </div>
+               </div>
+
+               <div className="absolute top-2 left-[100%] -translate-x-1/2 flex flex-col items-center">
+                 <div className={`w-8 h-8 rounded-full border-4 flex items-center justify-center bg-zinc-900 z-10 transition-colors ${simulatedPoints >= 20 ? 'border-secondary text-secondary' : 'border-zinc-700 text-zinc-500'}`}>
+                   <Crown className="w-4 h-4" />
+                 </div>
+                 <div className="mt-4 text-center absolute top-full w-36">
+                   <div className="text-xs font-bold text-secondary">20 Pts</div>
+                   <div className="text-[10px] text-white/60 mt-1 leading-tight">Corte + Hidratación</div>
+                 </div>
+               </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Refer a Friend Section */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 p-8 md:p-12 rounded-2xl max-w-4xl mx-auto"
+          className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 p-8 md:p-12 rounded-2xl max-w-4xl mx-auto mb-16"
         >
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="flex-1 text-center md:text-left">
@@ -167,6 +243,61 @@ export function Loyalty() {
                 className="w-full h-auto aspect-square object-cover rounded-full border-4 border-zinc-800 relative z-10"
               />
             </div>
+          </div>
+        </motion.div>
+
+        {/* Visit History Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 p-8 md:p-12 rounded-2xl max-w-4xl mx-auto"
+        >
+          <div className="flex items-center gap-4 mb-8 justify-center md:justify-start">
+            <div className="bg-secondary/20 p-3 rounded-full">
+              <History className="w-6 h-6 text-secondary" />
+            </div>
+            <h3 className="text-3xl font-display">Historial de Visitas</h3>
+          </div>
+          
+          <div className="space-y-4">
+            {[
+              { date: '15 Jun, 2024', service: 'Balayage + Olaplex', points: '+15', status: 'Completado' },
+              { date: '28 May, 2024', service: 'Corte + Secado', points: '+4', status: 'Completado' },
+              { date: '10 Abr, 2024', service: 'Canje: Secado Gratis', points: '-10', status: 'Recompensa' },
+              { date: '02 Mar, 2024', service: 'Tinte + Hidratación', points: '+8', status: 'Completado' }
+            ].map((visit, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="bg-zinc-800/40 border border-zinc-700/50 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-zinc-800/60 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`p-3 rounded-full ${visit.points.startsWith('+') ? 'bg-zinc-700/50 text-white' : 'bg-secondary/20 text-secondary'}`}>
+                    {visit.points.startsWith('+') ? <CheckCircle2 className="w-5 h-5" /> : <Gift className="w-5 h-5" />}
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-lg text-white mb-1">{visit.service}</h4>
+                    <div className="flex items-center gap-3 text-sm text-white/50">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {visit.date}
+                      </span>
+                      <span className="hidden sm:inline">•</span>
+                      <span className="text-white/40">{visit.status}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={`text-xl font-bold whitespace-nowrap text-right ${visit.points.startsWith('+') ? 'text-secondary' : 'text-white/70'}`}>
+                  {visit.points} pts
+                </div>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
 

@@ -99,6 +99,8 @@ Hora: ${formData.time}
 Servicios seleccionados:
 ${selectedServices.map(s => `* ${s}`).join('\n')}
 
+Subtotal estimado: ${formatPrice(`$${total}`)}${hasVariable ? ' + variable' : ''}
+
 Comentarios:
 ${formData.comments || 'Ninguno'}`;
 
@@ -158,6 +160,27 @@ Por favor envíenme un recordatorio por WhatsApp 24 horas antes de mi cita. ¡Gr
     window.open(`https://wa.me/584143518301?text=${encodedMessage}`, '_blank');
   };
 
+  const calculateSubtotal = () => {
+    let total = 0;
+    let hasVariable = false;
+    
+    selectedServices.forEach(serviceName => {
+      const service = SERVICES_LIST.find(s => s.name === serviceName);
+      if (service) {
+        const match = service.price.match(/\$(\d+)/);
+        if (match && match[1]) {
+          total += parseInt(match[1]);
+        } else {
+          hasVariable = true;
+        }
+      }
+    });
+
+    return { total, hasVariable };
+  };
+
+  const { total, hasVariable } = calculateSubtotal();
+
   return (
     <section id="reservar" className="py-24 bg-stone-100 dark:bg-zinc-950 relative">
       <div className="max-w-7xl mx-auto px-6">
@@ -214,6 +237,22 @@ Por favor envíenme un recordatorio por WhatsApp 24 horas antes de mi cita. ¡Gr
                 <div>
                   <h4 className="text-xs font-bold tracking-widest uppercase text-primary mb-3">Contacto Directo</h4>
                   <p className="text-dark dark:text-gray-200 font-light text-sm">+58 414-3518301</p>
+                </div>
+
+                <div className="pt-6 border-t border-soft/50 dark:border-stone-700/50">
+                  <h4 className="text-xs font-bold tracking-widest uppercase text-primary mb-4">Métodos de Pago</h4>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-sm bg-[#FCD535] text-black">BinancePay</span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-sm bg-[#00457C] text-white">PayPal</span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-sm bg-zinc-800 text-white">USDT / BTC</span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-sm bg-[#741FF5] text-white">Zelle</span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-sm bg-[#00D1FF] text-black">KontigoAPP</span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-sm bg-[#E6007E] text-white">ChinChinApp</span>
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-sm bg-stone-300 dark:bg-stone-700 text-stone-900 dark:text-stone-100">Pago Móvil Interbancario</span>
+                  </div>
+                  <p className="text-[10px] text-natural dark:text-gray-400 font-light italic">
+                    * Y muchos más, a consultar vía WhatsApp.
+                  </p>
                 </div>
               </div>
             </div>
@@ -367,6 +406,18 @@ Por favor envíenme un recordatorio por WhatsApp 24 horas antes de mi cita. ¡Gr
                   value={formData.comments} onChange={e => setFormData({...formData, comments: e.target.value})}
                 ></textarea>
               </div>
+
+              {selectedServices.length > 0 && (
+                <div className="bg-stone-100 dark:bg-stone-800 rounded-xl p-4 flex justify-between items-center border border-gray-200 dark:border-stone-700">
+                  <span className="text-dark dark:text-white font-medium">Subtotal estimado:</span>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-primary">
+                      {formatPrice(`$${total}`)}
+                      {hasVariable && <span className="text-sm font-normal text-natural dark:text-gray-400 ml-1">+ variable</span>}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-col gap-4">
                 <button type="submit" className="w-full bg-accent text-white py-4 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-dark transition-colors">
