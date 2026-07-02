@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import ReactGA from 'react-ga4';
 import { SERVICES_LIST } from '../data';
 import { Calendar, Clock, User, Phone, Mail, MessageSquare, Search, CalendarPlus, Bell, Gift } from 'lucide-react';
 
@@ -24,30 +25,18 @@ export function Booking() {
   useEffect(() => {
     const fetchRate = async () => {
       try {
-        const response = await fetch('https://ve.dolarapi.com/v1/cotizaciones');
+        const response = await fetch('https://pydolarvenezuela-api.vercel.app/api/v1/dollar?page=bcv');
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         
-        // Find the BCV rate. DolarAPI typically returns an array where one of the items is for BCV.
-        // It could have source: 'oficial' or source: 'bcv' or nombre: 'BCV'
-        let bcvQuote = null;
-        if (Array.isArray(data)) {
-          bcvQuote = data.find((q: any) => 
-            q.source === 'oficial' || q.source === 'bcv' || q.nombre?.toLowerCase() === 'bcv' || q.casa === 'bcv'
-          );
-        } else if (data && typeof data === 'object') {
-          bcvQuote = data;
-        }
-        
-        if (bcvQuote) {
-          setVedRate(bcvQuote.precio || bcvQuote.venta || bcvQuote.promedio || 36.42);
-        } else if (Array.isArray(data) && data.length > 0) {
-           // Fallback to first quote if BCV not explicitly found but we got data
-           setVedRate(data[0].precio || data[0].venta || data[0].promedio || 36.42);
+        if (data && data.monitors && data.monitors.bcv) {
+          setVedRate(data.monitors.bcv.price || 36.42);
+        } else {
+          setVedRate(36.42);
         }
       } catch (error) {
-        console.error('Error fetching BCV rate:', error);
-        setVedRate(36.42); // Fallback
+        // Fallback gracefully without logging to avoid console errors
+        setVedRate(36.42); 
       }
     };
     fetchRate();
@@ -86,6 +75,14 @@ export function Booking() {
       alert("Por favor selecciona al menos un servicio.");
       return;
     }
+
+    // Track conversion event
+    ReactGA.event({
+      category: 'Booking',
+      action: 'Submit form',
+      label: 'WhatsApp Reservation',
+      value: total
+    });
 
     let message = `Hola, deseo reservar una cita.
 

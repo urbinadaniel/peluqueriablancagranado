@@ -32,7 +32,6 @@ export function Navbar({ currentPage, isDark, toggleDark, onOpenGiftCard }: Navb
     es: [
       { name: 'Inicio', href: '#inicio' },
       { name: 'Consejos de Belleza', href: '#blog' },
-      { name: 'Galería', href: '#galeria' },
       { name: 'Testimonios', href: '#testimonios' },
       { name: 'Ubicación', href: '#ubicacion' },
       { name: 'Contacto', href: '#contacto' },
@@ -40,7 +39,6 @@ export function Navbar({ currentPage, isDark, toggleDark, onOpenGiftCard }: Navb
     en: [
       { name: 'Home', href: '#inicio' },
       { name: 'Beauty Tips', href: '#blog' },
-      { name: 'Gallery', href: '#galeria' },
       { name: 'Testimonials', href: '#testimonios' },
       { name: 'Location', href: '#ubicacion' },
       { name: 'Contact', href: '#contacto' },

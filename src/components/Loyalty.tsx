@@ -1,12 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Star, Gift, Crown, Scissors, Share2, Copy, Check, History, Calendar, CheckCircle2 } from 'lucide-react';
+import ReactGA from 'react-ga4';
+import { Star, Gift, Crown, Scissors, Share2, Copy, Check, Facebook, Instagram, MessageCircle } from 'lucide-react';
 
 export function Loyalty() {
   const [referralName, setReferralName] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
   const [copied, setCopied] = useState(false);
   const [simulatedPoints, setSimulatedPoints] = useState(6);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          ReactGA.event({
+            category: 'Loyalty',
+            action: 'View Loyalty Section',
+            label: 'Loyalty Component Scrolled Into View'
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const element = document.getElementById('lealtad-section');
+    if (element) {
+      observer.observe(element);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
 
   const handleGenerateLink = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +76,7 @@ export function Loyalty() {
   ];
 
   return (
-    <section className="py-24 bg-dark text-white relative overflow-hidden">
+    <section id="lealtad-section" className="py-24 bg-dark text-white relative overflow-hidden">
       <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay"></div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
@@ -222,12 +247,54 @@ export function Loyalty() {
                       <span className="text-sm font-medium">{copied ? 'Copiado' : 'Copiar'}</span>
                     </button>
                   </div>
+                  
+                  <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
+                    <span className="text-sm text-white/70">Compartir en:</span>
+                    <div className="flex items-center gap-3">
+                      <a
+                        href={`https://wa.me/?text=¡Únete a Peluquería Blanca Granado y gana recompensas con mi enlace! ${encodeURIComponent(generatedLink)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors"
+                        aria-label="Compartir en WhatsApp"
+                      >
+                        <MessageCircle className="w-5 h-5" />
+                      </a>
+                      <a
+                        href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(generatedLink)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-3 bg-[#1877F2] text-white rounded-full hover:bg-[#1877F2]/90 transition-colors"
+                        aria-label="Compartir en Facebook"
+                      >
+                        <Facebook className="w-5 h-5" />
+                      </a>
+                      <button
+                        onClick={() => {
+                          if (navigator.share) {
+                            navigator.share({
+                              title: 'Únete a Peluquería Blanca Granado',
+                              text: '¡Gana recompensas con mi enlace de referido!',
+                              url: generatedLink
+                            }).catch(console.error);
+                          } else {
+                            alert('Copia el enlace y pégalo en tus Historias de Instagram con el sticker de "Enlace".');
+                          }
+                        }}
+                        className="p-3 bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white rounded-full hover:opacity-90 transition-opacity"
+                        aria-label="Compartir en Instagram Stories"
+                      >
+                        <Instagram className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+
                   <button 
                     onClick={() => {
                       setGeneratedLink('');
                       setReferralName('');
                     }}
-                    className="text-white/50 text-sm hover:text-white underline transition-colors"
+                    className="text-white/50 text-sm hover:text-white underline transition-colors mt-2"
                   >
                     Generar otro enlace
                   </button>
@@ -246,7 +313,7 @@ export function Loyalty() {
           </div>
         </motion.div>
 
-        {/* Visit History Section */}
+        {/* Demo Monthly Email Summary */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -254,50 +321,29 @@ export function Loyalty() {
           transition={{ duration: 0.8 }}
           className="bg-zinc-900/80 backdrop-blur-md border border-zinc-800 p-8 md:p-12 rounded-2xl max-w-4xl mx-auto"
         >
-          <div className="flex items-center gap-4 mb-8 justify-center md:justify-start">
-            <div className="bg-secondary/20 p-3 rounded-full">
-              <History className="w-6 h-6 text-secondary" />
-            </div>
-            <h3 className="text-3xl font-display">Historial de Visitas</h3>
-          </div>
-          
-          <div className="space-y-4">
-            {[
-              { date: '15 Jun, 2024', service: 'Balayage + Olaplex', points: '+15', status: 'Completado' },
-              { date: '28 May, 2024', service: 'Corte + Secado', points: '+4', status: 'Completado' },
-              { date: '10 Abr, 2024', service: 'Canje: Secado Gratis', points: '-10', status: 'Recompensa' },
-              { date: '02 Mar, 2024', service: 'Tinte + Hidratación', points: '+8', status: 'Completado' }
-            ].map((visit, index) => (
-              <motion.div 
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="bg-zinc-800/40 border border-zinc-700/50 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-zinc-800/60 transition-colors"
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-2xl font-display mb-2 text-secondary">Demo Admin: Resumen Mensual</h3>
+              <p className="text-white/70 font-light text-sm mb-4">
+                Prueba el sistema automatizado de correos mensuales (cron job). Al ejecutarlo, enviará reportes personalizados con los puntos acumulados y una "advertencia de expiración" si los puntos están por vencer en 6 meses.
+              </p>
+              <button 
+                onClick={async () => {
+                  try {
+                    const res = await fetch('/api/admin/trigger-monthly-summary', { method: 'POST' });
+                    const data = await res.json();
+                    if (data.success) {
+                      alert('Correos enviados con éxito. Revisa la terminal del servidor (o Ethereal) para ver las URLs de los correos.');
+                    }
+                  } catch (e) {
+                    alert('Error al enviar los correos.');
+                  }
+                }}
+                className="bg-primary text-white py-2 px-6 rounded-sm font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-white hover:text-dark transition-colors"
               >
-                <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-full ${visit.points.startsWith('+') ? 'bg-zinc-700/50 text-white' : 'bg-secondary/20 text-secondary'}`}>
-                    {visit.points.startsWith('+') ? <CheckCircle2 className="w-5 h-5" /> : <Gift className="w-5 h-5" />}
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-lg text-white mb-1">{visit.service}</h4>
-                    <div className="flex items-center gap-3 text-sm text-white/50">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {visit.date}
-                      </span>
-                      <span className="hidden sm:inline">•</span>
-                      <span className="text-white/40">{visit.status}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className={`text-xl font-bold whitespace-nowrap text-right ${visit.points.startsWith('+') ? 'text-secondary' : 'text-white/70'}`}>
-                  {visit.points} pts
-                </div>
-              </motion.div>
-            ))}
+                Disparar Correos Mensuales (Demo)
+              </button>
+            </div>
           </div>
         </motion.div>
 
